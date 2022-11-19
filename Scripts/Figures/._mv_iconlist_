@@ -5,4 +5,5 @@
 23,8,MACRO,Plot_Location_OBS.mv
 179,8,NOTE,Plot_QualityCheck_OBS.log
 1031,8,PYTHON,Plot_QualityCheck_OBS.py
+-100,-100,PYTHON,Plot_StatisticAD.py
 1209,8,PYTHON,Plot_TempDistr_OBS.py
