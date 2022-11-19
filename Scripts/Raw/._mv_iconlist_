@@ -1,0 +1,11 @@
+9,8,SHELL,Retrieve_ERA5_EDA_LongRange.sh
+9,69,SHELL,Retrieve_ERA5_EDA_ShortRange.sh
+242,8,SHELL,Retrieve_ERA5_LongRange.sh
+459,8,SHELL,Retrieve_ERA5_ShortRange.sh
+700,69,SHELL,Retrieve_ERA5_ecPoint.sh
+698,8,SHELL,Retrieve_HRES_46r1.sh
+936,8,SHELL,Retrieve_LSM.sh
+272,69,SHELL,Retrieve_OBS_CPC.sh
+490,69,SHELL,Retrieve_OBS_STVL.sh
+1332,8,SHELL,Retrieve_Reforecasts_46r1.sh
+970,69,SHELL,temp2.sh

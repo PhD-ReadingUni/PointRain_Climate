@@ -1,0 +1,177 @@
+# Metview Macro
+
+###########################################################################################################################################################################
+# CODE DESCRIPTION
+# Plot_LocationOBS.py plots the location and the reporting time of the considered point rainfall observations
+
+# DESCRIPTION OF INPUT PARAMETERS
+# Acc (number, in hours): rainfall accumulation period.
+# Date (date, in YYYY-MM-DDformat): date to plot
+# Dataset_list (list of strings): names of the considered datasets from stvl.
+# Git_repo (string): path of local github repository
+# DirIN (string): relative path for the input directory
+# DirOUT (string): relative path for the output directory
+
+# INPUT PARAMETERS
+Acc = 24
+Date = 2019-01-01
+Dataset_list = ["synop", "bom", "india", "vnm"]
+Git_repo = "/ec/vol/ecpoint/mofp/PhD/Papers2Write/PointRain_Climate"
+DirIN = "Data/Processed/01_UniqueOBS_24h_synop_00UTC"
+DirOUT = "Data/Figures/Location_OBS"
+###########################################################################################################################################
+
+
+# Reading the rainfall observations
+geo_00 = nil
+geo_01 = nil
+geo_03 = nil
+geo_04 = nil
+geo_05 = nil
+geo_06 = nil
+geo_12 = nil
+
+for ind_Dataset = 1 to count(Dataset_list) do
+
+    Dataset = Dataset_list[ind_Dataset]
+
+    FileIN_00 = Git_repo & "/" & DirIN & "/" & Dataset & "/" & string(Date,"yyyymmdd") & "/tp" & Acc & "_obs_" & string(Date,"yyyymmdd") & "00.geo"
+    FileIN_01 = Git_repo & "/" & DirIN & "/" & Dataset & "/" & string(Date,"yyyymmdd") & "/tp" & Acc & "_obs_" & string(Date,"yyyymmdd") & "01.geo"
+    FileIN_03 = Git_repo & "/" & DirIN & "/" & Dataset & "/" & string(Date,"yyyymmdd") & "/tp" & Acc & "_obs_" & string(Date,"yyyymmdd") & "03.geo"
+    FileIN_04 = Git_repo & "/" & DirIN & "/" & Dataset & "/" & string(Date,"yyyymmdd") & "/tp" & Acc & "_obs_" & string(Date,"yyyymmdd") & "04.geo"
+    FileIN_05 = Git_repo & "/" & DirIN & "/" & Dataset & "/" & string(Date,"yyyymmdd") & "/tp" & Acc & "_obs_" & string(Date,"yyyymmdd") & "05.geo"
+    FileIN_06 = Git_repo & "/" & DirIN & "/" & Dataset & "/" & string(Date,"yyyymmdd") & "/tp" & Acc & "_obs_" & string(Date,"yyyymmdd") & "06.geo"
+    FileIN_12 = Git_repo & "/" & DirIN & "/" & Dataset & "/" & string(Date,"yyyymmdd") & "/tp" & Acc & "_obs_" & string(Date,"yyyymmdd") & "12.geo"
+
+    if exist(FileIN_00) then
+        geo_00 = geo_00 & read(FileIN_00)
+    end if
+    
+    if exist(FileIN_01) then
+        geo_01 = geo_01 & read(FileIN_01)
+    end if
+    
+    if exist(FileIN_03) then
+        geo_03 = geo_03 & read(FileIN_03)
+    end if
+    
+    if exist(FileIN_04) then
+        geo_04 = geo_04 & read(FileIN_04)
+    end if
+    
+    if exist(FileIN_05) then
+        geo_05 = geo_05 & read(FileIN_05)
+    end if
+    
+    if exist(FileIN_06) then
+        geo_06 = geo_06 & read(FileIN_06)
+    end if
+    
+    if exist(FileIN_12) then
+        geo_12 = geo_12 & read(FileIN_12)
+    end if
+    
+end for    
+
+# Plotting the climatologies
+coastlines = mcoast(
+             map_coastline_thickness  : 2,
+             map_coastline_resolution : "medium",
+             map_boundaries           : "on",
+             map_boundaries_colour    : "charcoal",
+             map_boundaries_thickness : 1,
+             map_grid                 : "off",
+             map_label                : "off"
+             )
+
+markers_00 = psymb(
+   symbol_type         : "MARKER",
+   symbol_table_mode   : "ON",
+   legend              : "ON",
+   symbol_quality      : "HIGH",
+   symbol_min_table    : [ 0],
+   symbol_max_table    : [ 10000],
+   symbol_marker_table : [ 15],
+   symbol_colour_table : ["grey"],
+   symbol_height_table : [ 0.15]
+   )
+
+markers_01 = psymb(
+   symbol_type         : "MARKER",
+   symbol_table_mode   : "ON",
+   legend              : "ON",
+   symbol_quality      : "HIGH",
+   symbol_min_table    : [ 0],
+   symbol_max_table    : [ 10000],
+   symbol_marker_table : [ 15],
+   symbol_colour_table : ["blue"],
+   symbol_height_table : [ 0.15]
+   )
+
+markers_03 = psymb(
+   symbol_type         : "MARKER",
+   symbol_table_mode   : "ON",
+   legend              : "ON",
+   symbol_quality      : "HIGH",
+   symbol_min_table    : [ 0],
+   symbol_max_table    : [ 10000],
+   symbol_marker_table : [ 15],
+   symbol_colour_table : ["red"],
+   symbol_height_table : [ 0.15]
+   )
+
+markers_04 = psymb(
+   symbol_type         : "MARKER",
+   symbol_table_mode   : "ON",
+   legend              : "ON",
+   symbol_quality      : "HIGH",
+   symbol_min_table    : [ 0],
+   symbol_max_table    : [ 10000],
+   symbol_marker_table : [ 15],
+   symbol_colour_table : ["green"],
+   symbol_height_table : [ 0.15]
+   )
+
+markers_05 = psymb(
+   symbol_type         : "MARKER",
+   symbol_table_mode   : "ON",
+   legend              : "ON",
+   symbol_quality      : "HIGH",
+   symbol_min_table    : [ 0],
+   symbol_max_table    : [ 10000],
+   symbol_marker_table : [ 15],
+   symbol_colour_table : ["orange"],
+   symbol_height_table : [ 0.15]
+   )
+
+markers_06 = psymb(
+   symbol_type         : "MARKER",
+   symbol_table_mode   : "ON",
+   legend              : "ON",
+   symbol_quality      : "HIGH",
+   symbol_min_table    : [ 0],
+   symbol_max_table    : [ 10000],
+   symbol_marker_table : [ 15],
+   symbol_colour_table : ["purple"],
+   symbol_height_table : [ 0.15]
+   )
+
+markers_12 = psymb(
+   symbol_type         : "MARKER",
+   symbol_table_mode   : "ON",
+   legend              : "ON",
+   symbol_quality      : "HIGH",
+   symbol_min_table    : [ 0],
+   symbol_max_table    : [ 10000],
+   symbol_marker_table : [ 15],
+   symbol_colour_table : ["black"],
+   symbol_height_table : [ 0.15]
+   )
+
+# Saving the plots
+DirOUT_temp = Git_repo & "/" & DirOUT
+shell("mkdir -p " & DirOUT_temp)
+png = png_output(output_name : DirOUT_temp & "/" & string(Date,"yyyymmdd"))
+setoutput(png)
+
+plot(geo_00, markers_00, geo_01, markers_01, geo_03, markers_03, geo_04, markers_04, geo_05, markers_05, geo_06, markers_06, geo_12, markers_12)
