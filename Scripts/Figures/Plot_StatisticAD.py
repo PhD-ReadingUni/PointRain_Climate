@@ -75,7 +75,7 @@ def plot_statisticAD(RunType, ClimateType, Title_text_line_1, Title_text_line_2,
             values = not_reject_array
             )
 
-      # Plotting the climatology
+      # Plotting the A-D statistic
       coastlines = mv.mcoast(
             map_coastline_thickness = 2,
             map_coastline_resolution = "medium",
@@ -85,6 +85,12 @@ def plot_statisticAD(RunType, ClimateType, Title_text_line_1, Title_text_line_2,
             map_grid = "off",
             map_label = "off"
             )
+      
+      Europe = mv.geoview(
+        map_projection      = "lambert",
+        map_area_definition = "corners",
+        area                = [23.12,-9.55,56.31,87.75]
+        )
 
       if RunType == "Static":
             symbol_height = 0.1
@@ -120,11 +126,20 @@ def plot_statisticAD(RunType, ClimateType, Title_text_line_1, Title_text_line_2,
 
       # Create plots
       if RunType == "Interactive":
+            
             mv.plot(not_reject_geo, coastlines, markers, legend, title)
+      
       else:
+            
+            # Global map
             svg = mv.png_output(output_name = DirOUT + "/" + ClimateType)
             mv.setoutput(svg)
             mv.plot(not_reject_geo, coastlines, markers, legend, title)
+            
+            # Zoom for Europe
+            svg = mv.png_output(output_name = DirOUT + "/" + ClimateType + "_Europe")
+            mv.setoutput(svg)
+            mv.plot(not_reject_geo, Europe, coastlines, markers, legend, title)
 
 #######################################################################################################################
 
@@ -150,7 +165,7 @@ for SystemFC in SystemFC_list:
                         # Plotting climatologies
                         for ClimateType in ClimateType_list:               
                               print(" - " + ClimateType)
-                              Title_text_line_1 = "Anderson-Darling Statistic for " + ClimateType + " climatology"
+                              Title_text_line_1 = "Anderson-Darling Statistic for " + SystemFC + " for " + ClimateType + " climatology"
                               plot_statisticAD(RunType, ClimateType, Title_text_line_1, Title_text_line_2, MainDirIN, MainDirOUT)
 
                   elif NameOBS == "08_AlignedOBS_cleanSTVL":
@@ -171,5 +186,5 @@ for SystemFC in SystemFC_list:
                               # Plotting climatologies
                               for ClimateType in ClimateType_list:               
                                     print(" - " + ClimateType)
-                                    Title_text_line_1 = "Anderson-Darling Statistic for " + ClimateType + " climatology"
+                                    Title_text_line_1 = "Anderson-Darling Statistic for " + SystemFC + " for " + ClimateType + " climatology"
                                     plot_statisticAD(RunType, ClimateType, Title_text_line_1, Title_text_line_2, MainDirIN, MainDirOUT)
