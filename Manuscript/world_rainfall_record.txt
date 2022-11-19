@@ -1,0 +1,12 @@
+World record for 24-hourly rainfall
+1825 mm, Foc Foc, La Réunion, 7-8 Jan 1966
+
+Reference:
+Holland, G.J. (1993): WMO/TC-No. 560, Report No. TCP-31, World Meteorological Organization; Geneva, Switzerland.
+
+
+
+6992
+
+690.0	6900
+691.0	6910		699.1
