@@ -67,6 +67,7 @@ def compute_climate_obs(MinDays_Perc, Perc_year, Perc_season, DirIN, DirOUT):
       min_obs = np.nanmin(align_obs_year, axis=1)
       max_obs = np.nanmax(align_obs_year, axis=1)
       align_obs_year_new = np.column_stack((min_obs, align_obs_year, max_obs))
+      align_obs_year_new = align_obs_year
      
       # Defining the minimum number of days accepted to compute the climatologies and keeping only stations that satisfy that condition
       MinNumDays = round(NumDays * MinDays_Perc)
@@ -113,7 +114,8 @@ def compute_climate_obs(MinDays_Perc, Perc_year, Perc_season, DirIN, DirOUT):
       min_obs = np.nanmin(align_obs_season, axis=1)
       max_obs = np.nanmax(align_obs_season, axis=1)
       align_obs_season_new = np.column_stack((min_obs, align_obs_season, max_obs))
-      
+      align_obs_season_new = align_obs_season
+
       # Defining the minimum number of days accepted to compute the climatologies and keeping only stations that satisfy that condition
       MinNumDays = round(NumDays_season * MinDays_Perc)
       NumDays_NotNaN = np.sum(~np.isnan(align_obs_season_new), axis=1)
@@ -159,6 +161,7 @@ def compute_climate_obs(MinDays_Perc, Perc_year, Perc_season, DirIN, DirOUT):
       min_obs = np.nanmin(align_obs_season, axis=1)
       max_obs = np.nanmax(align_obs_season, axis=1)
       align_obs_season_new = np.column_stack((min_obs, align_obs_season, max_obs))
+      align_obs_season_new = align_obs_season
 
       # Defining the minimum number of days accepted to compute the climatologies and keeping only stations that satisfy that condition
       MinNumDays = round(NumDays_season * MinDays_Perc)
@@ -204,6 +207,7 @@ def compute_climate_obs(MinDays_Perc, Perc_year, Perc_season, DirIN, DirOUT):
       min_obs = np.nanmin(align_obs_season, axis=1)
       max_obs = np.nanmax(align_obs_season, axis=1)
       align_obs_season_new = np.column_stack((min_obs, align_obs_season, max_obs))
+      align_obs_season_new = align_obs_season
 
       # Defining the minimum number of days accepted to compute the climatologies and keeping only stations that satisfy that condition
       MinNumDays = round(NumDays_season * MinDays_Perc)
@@ -249,7 +253,8 @@ def compute_climate_obs(MinDays_Perc, Perc_year, Perc_season, DirIN, DirOUT):
       min_obs = np.nanmin(align_obs_season, axis=1)
       max_obs = np.nanmax(align_obs_season, axis=1)
       align_obs_season_new = np.column_stack((min_obs, align_obs_season, max_obs))
-
+      align_obs_season_new = align_obs_season
+      
       # Defining the minimum number of days accepted to compute the climatologies and keeping only stations that satisfy that condition
       MinNumDays = round(NumDays_season * MinDays_Perc)
       NumDays_NotNaN = np.sum(~np.isnan(align_obs_season_new), axis=1)

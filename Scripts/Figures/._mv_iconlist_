@@ -3,6 +3,7 @@
 357,8,PYTHON,Plot_Climate_OBS_FC.py
 878,8,PYTHON,Plot_Drift_SpinUD.py
 23,8,MACRO,Plot_Location_OBS.mv
+1556,8,PYTHON,Plot_MaxRainOBS.py
 179,8,NOTE,Plot_QualityCheck_OBS.log
 1031,8,PYTHON,Plot_QualityCheck_OBS.py
 1392,8,PYTHON,Plot_StatisticAD.py
