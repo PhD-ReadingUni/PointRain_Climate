@@ -23,10 +23,10 @@ import numpy as np
 # DirOUT_Climate_FC (string): relative path for the output directory containing the modelled climatologies.
 
 # INPUT PARAMETERS
-YearS = 2000
-YearF = 2019
+YearS = 2019
+YearF = 2020
 Acc = 24
-SystemFC_list = ["ERA5_ecPoint/Pt_BC_PERC"]
+SystemFC_list = ["HRES_46r1"]
 Climate_OBS_Period = "2000_2019"
 MinDays_Perc_list = [0.5,0.75]
 NameOBS_list = ["06_AlignedOBS_rawSTVL", "07_AlignedOBS_gridCPC", "08_AlignedOBS_cleanSTVL"]
@@ -55,7 +55,16 @@ def distribution_percentiles(YearS, YearF, PercYear, PercSeason, DirIN_FC, DirOU
             tp = np.load(DirIN_FC + "/tp_" + Dataset + "_" + str(YearS) + ".npy")
             for Year in range (YearS+1,YearF+1):
                         print("     - Reading the indipendent rainfall realizations for year: " + str(Year))
-                        tp = np.hstack((tp, np.load(DirIN_FC + "/tp_" + Dataset + "_" + str(Year) + ".npy")))
+                        tp_raw = np.hstack((tp, np.load(DirIN_FC + "/tp_" + Dataset + "_" + str(Year) + ".npy")))
+
+            # Adjusting the dataset to not have the minimum and the maximum values in "align_obs" assigned to the 0th and 100th percentile
+            # Note: If the whole dataset for a station contains only nan, a warning message will appear on the screen, and the minimum or maximum
+            # value that will be associated to that station will be a nan. This issue does not stop the computations or compromise the results. This 
+            # happens mainly for the CPC dataset where a point station on the coast my be seen by CPC in the sea where there is no data available.
+            print("     - Adjusting the dataset to not have the minimum and the maximum values in the observational dataset assigned to the 0th and 100th percentile...")
+            min_tp = np.nanmin(tp_raw, axis=1)
+            max_tp = np.nanmax(tp_raw, axis=1)
+            tp = np.column_stack((min_tp, tp_raw, max_tp))
 
             # Computing the percentiles for the year/seasonal climatologies
             print("     - Computing the percentiles for the year/seasonal climatologies")
@@ -63,7 +72,7 @@ def distribution_percentiles(YearS, YearF, PercYear, PercSeason, DirIN_FC, DirOU
                   Perc = PercYear
             else:
                   Perc = PercSeason
-            climate = np.transpose(np.around(np.float32(np.nanpercentile(tp, Perc, axis=1, interpolation="lower").astype(float)), decimals=1))
+            climate = np.transpose(np.around(np.float32(np.nanpercentile(tp, Perc, axis=1, interpolation="linear").astype(float)), decimals=1))
 
             # Saving the year/seasonal climatologies and their correspondent metadata
             print("     - Saving the year/seasonal climatologies and their correspondent metadata")

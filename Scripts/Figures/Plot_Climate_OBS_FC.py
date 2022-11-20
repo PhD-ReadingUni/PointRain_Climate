@@ -38,28 +38,18 @@ YearS = 2000
 YearF = 2019
 Acc = 24
 RunType = "Static"
-DatasetType_OBS_FC = "FC"
+DatasetType_OBS_FC = "OBS"
 SystemFC = "ERA5_ecPoint/Pt_BC_PERC"
 MinDays_Perc_list = [0.5,0.75]
 NameOBS_list = ["06_AlignedOBS_rawSTVL", "07_AlignedOBS_gridCPC", "08_AlignedOBS_cleanSTVL"]
 Coeff_Grid2Point_list = [2,5,10,20,50,100]
-ClimateType_list = ["Year", "DJF", "MAM", "JJA", "SON"]
-Perc_list = [90, 95, 98, 99, 99.5, 99.8]
+ClimateType_list = ["Year"]
+Perc_list = [90, 95, 98, 99, 99.5, 99.8, 99.9, 99.95]
+#ClimateType_list = ["DJF", "MAM", "JJA", "SON"]
+#Perc_list = [90, 95, 98, 99, 99.5, 99.8]
 Git_repo = "/ec/vol/ecpoint/mofp/PhD/Papers2Write/PointRain_Climate"
 DirIN = "Data/Processed"
 DirOUT= "Data/Figures"
-
-# MinDays_Perc_list = [0.5,0.75]
-# NameOBS_list = ["06_AlignedOBS_rawSTVL", "07_AlignedOBS_gridCPC", "08_AlignedOBS_cleanSTVL"]
-# Coeff_Grid2Point_list = [2,5,10,20,50,100]
-# ClimateType_list = ["Year", "DJF", "MAM", "JJA", "SON"]
-# Perc_list = [90, 95, 98, 99, 99.5, 99.8]
-
-# MinDays_Perc_list = [0.5]
-# NameOBS_list = ["08_AlignedOBS_cleanSTVL"]
-# Coeff_Grid2Point_list = [100]
-# ClimateType_list = ["SON"]
-# Perc_list = [99.8]
 ############################################################################################################################################################
 
 # Costum functions

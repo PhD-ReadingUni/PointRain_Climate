@@ -1,0 +1,45 @@
+[ECMWF-INFO -sbatch] - -------------------------------------------------------------------------------------
+[ECMWF-INFO -sbatch] -  This is the ECMWF jobfilter
+[ECMWF-INFO -sbatch] -  +++ Please report issues using the Support portal +++
+[ECMWF-INFO -sbatch] -  +++ https://support.ecmwf.int                     +++
+[ECMWF-INFO -sbatch] -  /usr/local/bin/ecsbatch: size: 43670, mtime: Wed Nov  2 06:47:29 2022
+[ECMWF-INFO -sbatch] - -------------------------------------------------------------------------------------
+[ECMWF-INFO -sbatch] - Time at submit: Sun Nov 20 08:33:53 2022 (1668933233.9389467) on aa6-100.bullx:/etc/ecmwf/vol/ecpoint/mofp/PhD/Papers2Write/PointRain_Climate/Scripts/Processed
+[ECMWF-INFO -sbatch] - --- SLURM VARIABLES ---
+[ECMWF-INFO -sbatch] - EC_CLUSTER=aa
+[ECMWF-INFO -sbatch] - SLURM_EXPORT_ENV=ALL
+[ECMWF-INFO -sbatch] - SBATCH_EXPORT=NONE
+[ECMWF-INFO -sbatch] - -----------------------
+[ECMWF-INFO -sbatch] - jobscript: /etc/ecmwf/vol/ecpoint/mofp/PhD/Papers2Write/PointRain_Climate/Scripts/Processed/11_SubmitterATOS_Compute_Climate_FC_atOBS.sh
+[ECMWF-INFO -sbatch] - --- SCRIPT OPTIONS ---
+[ECMWF-INFO -sbatch] - #SBATCH --job-name=Compute_Climate_FC_atOBS
+[ECMWF-INFO -sbatch] - #SBATCH --output=LogATOS/Compute_Climate_FC_atOBS-%J.out
+[ECMWF-INFO -sbatch] - #SBATCH --error=LogATOS/Compute_Climate_FC_atOBS-%J.out
+[ECMWF-INFO -sbatch] - #SBATCH --cpus-per-task=1
+[ECMWF-INFO -sbatch] - #SBATCH --mem=64G
+[ECMWF-INFO -sbatch] - #SBATCH --qos=nf
+[ECMWF-INFO -sbatch] - #SBATCH --mail-type=FAIL
+[ECMWF-INFO -sbatch] - #SBATCH --mail-user=fatima.pillosu@ecmwf.int
+[ECMWF-INFO -sbatch] - -----------------------
+[ECMWF-INFO -sbatch] - --- POST-PROCESSED OPTIONS ---
+[ECMWF-INFO -sbatch] - ARG --positional=['11_SubmitterATOS_Compute_Climate_FC_atOBS.sh']
+[ECMWF-INFO -sbatch] - ARG --cpus_per_task=1
+[ECMWF-INFO -sbatch] - ARG --error=LogATOS/Compute_Climate_FC_atOBS-%J.out
+[ECMWF-INFO -sbatch] - ARG --job_name=Compute_Climate_FC_atOBS
+[ECMWF-INFO -sbatch] - ARG --mail_type=FAIL
+[ECMWF-INFO -sbatch] - ARG --mail_user=fatima.pillosu@ecmwf.int
+[ECMWF-INFO -sbatch] - ARG --output=LogATOS/Compute_Climate_FC_atOBS-%J.out
+[ECMWF-INFO -sbatch] - ARG --qos=nf
+[ECMWF-INFO -sbatch] - ARG --mem=64G
+[ECMWF-INFO -sbatch] - ------------------------------
+[ECMWF-INFO -sbatch] - jobtag: mofp-Compute_Cl_e_FC_atOBS-1x2-/etc/ecmwf/vol/ecpoint/mofp/PhD/Papers2Write/PointRain_Climate/Scripts/Processed/LogATOS/Compute_Climate_FC_atOBS-%J.out
+[ECMWF-INFO -sbatch] - ['/usr/bin/sbatch', '--cpus-per-task=1', '--error=LogATOS/Compute_Climate_FC_atOBS-%J.out', '--job-name=Compute_Climate_FC_atOBS', '--mail-type=FAIL', '--mail-user=fatima.pillosu@ecmwf.int', '--output=LogATOS/Compute_Climate_FC_atOBS-%J.out', '--qos=nf', '--mem=64G', '--time=1-00:00:00', '/etc/ecmwf/vol/ecpoint/mofp/PhD/Papers2Write/PointRain_Climate/Scripts/Processed/11_SubmitterATOS_Compute_Climate_FC_atOBS.sh']
+[ECMWF-INFO -sbatch] - sbatch executed on aa
+[ECMWF-INFO -sbatch] - Job queued on aa using method local
+[ECMWF-INFO -sbatch] - Submitted batch job 12671034
+[ECMWF-INFO -ecprofile] /usr/bin/bash NON_INTERACTIVE on aa6-172 at 20221120_083356.467, PID: 2312642, JOBID: 12671034
+[ECMWF-INFO -ecprofile] $SCRATCH=/ec/res4/scratch/mofp
+[ECMWF-INFO -ecprofile] $PERM=/perm/mofp
+[ECMWF-INFO -ecprofile] $HPCPERM=/ec/res4/hpcperm/mofp
+[ECMWF-INFO -ecprofile] $TMPDIR=/etc/ecmwf/ssd/ssd1/tmpdirs/mofp.12671034
+[ECMWF-INFO -ecprofile] $SCRATCHDIR=/ec/res4/scratchdir/mofp/2/12671034
