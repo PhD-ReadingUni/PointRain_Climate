@@ -43,234 +43,65 @@ def compute_climate_obs(MinDays_Perc, Perc_year, Perc_season, DirIN, DirOUT):
       # Reading the rainfall observations over the period of interest and the correspondent metadata (i.e., ids/lats/lons/dates)
       print(" ")
       print(" - Reading the rainfall observations over the period of interest and the correspondent metadata (i.e., ids/lats/lons/dates)")
-      stnids_unique = np.load(DirIN + "/stn_ids.npy")
-      lats_unique = np.load(DirIN + "/stn_lats.npy")
-      lons_unique = np.load(DirIN + "/stn_lons.npy")
+      stnids = np.load(DirIN + "/stn_ids.npy")
+      lats = np.load(DirIN + "/stn_lats.npy")
+      lons = np.load(DirIN + "/stn_lons.npy")
       dates = np.load(DirIN + "/dates.npy")
-      align_obs = np.load(DirIN + "/obs.npy")
-      NumStns = align_obs.shape[0]
-      NumDays = align_obs.shape[1]
-
-
-      ###################
-      # YEAR CLIMATOLOGY #
-      ###################
-
-      print(" ")
-      print(" - Computing the year point observational climatologies...")
-
-      # Removing those stations that do not contain any observations (i.e. all row contains only nan values)
-      align_obs_year = np.delete(align_obs, np.all(np.isnan(align_obs), axis=1), 0)
-
-      # Adjusting the dataset to not have the minimum and the maximum values assigned to the 0th and 100th percentile
-      print("     - Adjusting the dataset to not have the minimum and the maximum values in the observational dataset assigned to the 0th and 100th percentile...")
-      min_obs = np.nanmin(align_obs_year, axis=1)
-      max_obs = np.nanmax(align_obs_year, axis=1)
-      align_obs_year_new = np.column_stack((min_obs, align_obs_year, max_obs))
-      align_obs_year_new = align_obs_year
-     
-      # Defining the minimum number of days accepted to compute the climatologies and keeping only stations that satisfy that condition
-      MinNumDays = round(NumDays * MinDays_Perc)
-      NumDays_NotNaN = np.sum(~np.isnan(align_obs_year_new), axis=1)
-      ind_stns_MinNumDays = np.where(NumDays_NotNaN >= MinNumDays)[0]
-      align_obs_MinNumDays = align_obs_year_new[ind_stns_MinNumDays,:]
-      NumStns_MinNumDays = ind_stns_MinNumDays.shape[0]
-      print("     - " + str(NumStns_MinNumDays) + " over " + str(NumStns) + " stations satisfy the threshold of having observations for at least " + str(int(MinDays_Perc*100)) + "% of the days over the considered period. Saving the metadata only about the considered stations (stnids/lats/lons)")
-      np.save(DirOUT + "/" + "Stn_ids.npy", stnids_unique[ind_stns_MinNumDays])
-      np.save(DirOUT + "/" + "Stn_lats.npy", lats_unique[ind_stns_MinNumDays])
-      np.save(DirOUT + "/" + "Stn_lons.npy", lons_unique[ind_stns_MinNumDays])
+      obs = np.load(DirIN + "/obs.npy")
       
-      # Computing and saving the percentiles for the year climatology
-      print("     - Computing and saving the climatologies...")
-      climate_year = np.transpose(np.round(np.float32(np.nanpercentile(align_obs_MinNumDays, Perc_year, axis=1, interpolation="linear").astype(float)), decimals=1))
-      np.save(DirOUT + "/Percentiles_Year.npy", Perc_year)
-      np.save(DirOUT + "/Climate_Year.npy", climate_year)
+      # Computing the climatologies
+      ClimateType_list = ["Year", "DJF", "MAM", "JJA", "SON"]
+      for ClimateType in ClimateType_list:
 
+            # Selecting the year or the seasonal subset with the observational dataset
+            print(" ")
+            print("     - Selecting the " + ClimateType + "  subset with the observational dataset")
+            if ClimateType == "Year":
+                  obs_temp = obs
+                  percs = Perc_year
+                  NamePercs = "Percentiles_Year"
+            else:
+                  if ClimateType == "DJF":
+                        M1 = 12; M2 = 1; M3 = 2
+                  if ClimateType == "MAM":
+                        M1 = 3; M2 = 4; M3 = 5
+                  if ClimateType == "JJA":
+                        M1 = 6; M2 = 7; M3 = 8
+                  if ClimateType == "SON":
+                        M1 = 9; M2 = 10; M3 = 11
+                  ind_dates_season = []
+                  for ind_dates in range(obs.shape[1]):
+                        month = (datetime.strptime(dates[ind_dates], "%Y%m%d")).month
+                        if (month == M1) or (month == M2) or (month == M3):
+                              ind_dates_season.append(ind_dates)
+                  obs_temp = obs[:,ind_dates_season]
+                  percs = Perc_season
+                  NamePercs = "Percentiles_Season"
+            
+            # Selecting the stations with the considered minimum number of days with valid observations
+            print("     - Selecting the stations with the considered minimum number of days with valid observations")
+            MinNumDays = round(obs_temp.shape[1] * MinDays_Perc)
+            NumDays_NotNaN = np.sum(~np.isnan(obs_temp), axis=1)
+            ind_stns_MinNumDays = np.where(NumDays_NotNaN >= MinNumDays)[0]
+            obs_temp_MinNumDays = obs_temp[ind_stns_MinNumDays,:]
+            lats_MinNumDays = lats[ind_stns_MinNumDays]
+            lons_MinNumDays = lons[ind_stns_MinNumDays]
+            stnids_MinNumDays = stnids[ind_stns_MinNumDays]
 
-      ############################
-      # SEASONAL CLIMATOLOGY (DJF) #
-      ############################
+            # Adjusting the dataset to not have the minimum and the maximum values assigned to the 0th and 100th percentile
+            print("     - Adjusting the dataset to not have the minimum and the maximum values in the observational dataset assigned to the 0th and 100th percentile...")
+            min_obs = np.nanmin(obs_temp_MinNumDays, axis=1)
+            max_obs = np.nanmax(obs_temp_MinNumDays, axis=1)
+            obs_temp_MinNumDays_new = np.column_stack((min_obs, obs_temp_MinNumDays, max_obs))
 
-      print(" ")
-      print(" - Computing the seasonal (DJF) point observational climatologies...")
-      
-      # Selecting the days in the observational dataset that belong to the considered season
-      M1 = 12
-      M2 = 1
-      M3 = 2
-      ind_dates_season = []
-      for ind_dates in range(NumDays):
-            month = (datetime.strptime(dates[ind_dates], "%Y%m%d")).month
-            if (month == M1) or (month == M2) or (month == M3):
-                  ind_dates_season.append(ind_dates)
-      NumDays_season = len(ind_dates_season)
-      align_obs_season = align_obs[:,ind_dates_season]
-      
-      # Removing those stations that do not contain any observations (i.e. all row contains only nan values)
-      align_obs_season = np.delete(align_obs_season, np.all(np.isnan(align_obs_season), axis=1), 0)
-
-      # Adjusting the dataset to not have the minimum and the maximum values assigned to the 0th and 100th percentile
-      print("     - Adjusting the dataset to not have the minimum and the maximum values in the observational dataset assigned to the 0th and 100th percentile...")
-      min_obs = np.nanmin(align_obs_season, axis=1)
-      max_obs = np.nanmax(align_obs_season, axis=1)
-      align_obs_season_new = np.column_stack((min_obs, align_obs_season, max_obs))
-      align_obs_season_new = align_obs_season
-
-      # Defining the minimum number of days accepted to compute the climatologies and keeping only stations that satisfy that condition
-      MinNumDays = round(NumDays_season * MinDays_Perc)
-      NumDays_NotNaN = np.sum(~np.isnan(align_obs_season_new), axis=1)
-      ind_stns_MinNumDays = np.where(NumDays_NotNaN >= MinNumDays)[0]
-      align_obs_MinNumDays = align_obs_season_new[ind_stns_MinNumDays,:]
-      NumStns_MinNumDays = ind_stns_MinNumDays.shape[0]
-      print("     - " + str(NumStns_MinNumDays) + " over " + str(NumStns) + " stations satisfy the threshold of having observations for at least " + str(int(MinDays_Perc*100)) + "% of the days over the considered period. Saving the metadata only about the considered stations (stnids/lats/lons)")
-      np.save(DirOUT + "/" + "Stn_ids.npy", stnids_unique[ind_stns_MinNumDays])
-      np.save(DirOUT + "/" + "Stn_lats.npy", lats_unique[ind_stns_MinNumDays])
-      np.save(DirOUT + "/" + "Stn_lons.npy", lons_unique[ind_stns_MinNumDays])
-
-      # Computing and saving the percentiles for the year climatology
-      print("     - Computing and saving the climatologies...")
-      climate_season = np.transpose(np.round(np.float32(np.nanpercentile(align_obs_MinNumDays, Perc_season, axis=1, interpolation="linear").astype(float)), decimals=1))
-      np.save(DirOUT + "/Percentiles_Season.npy", Perc_season)
-      np.save(DirOUT + "/Climate_DJF.npy", climate_season)
-
-      
-      ##############################
-      # SEASONAL CLIMATOLOGY (MAM) #
-      ##############################
-
-      print(" ")
-      print(" - Computing the seasonal (MAM) point observational climatologies...")
-      
-      # Selecting the days in the observational dataset that belong to the considered season
-      M1 = 3
-      M2 = 4
-      M3 = 5
-      ind_dates_season = []
-      for ind_dates in range(NumDays):
-            month = (datetime.strptime(dates[ind_dates], "%Y%m%d")).month
-            if (month == M1) or (month == M2) or (month == M3):
-                  ind_dates_season.append(ind_dates)
-      NumDays_season = len(ind_dates_season)
-      align_obs_season = align_obs[:,ind_dates_season]
-
-      # Removing those stations that do not contain any observations (i.e. all row contains only nan values)
-      align_obs_season = np.delete(align_obs_season, np.all(np.isnan(align_obs_season), axis=1), 0)
-
-      # Adjusting the dataset to not have the minimum and the maximum values assigned to the 0th and 100th percentile
-      print("     - Adjusting the dataset to not have the minimum and the maximum values in the observational dataset assigned to the 0th and 100th percentile...")
-      min_obs = np.nanmin(align_obs_season, axis=1)
-      max_obs = np.nanmax(align_obs_season, axis=1)
-      align_obs_season_new = np.column_stack((min_obs, align_obs_season, max_obs))
-      align_obs_season_new = align_obs_season
-
-      # Defining the minimum number of days accepted to compute the climatologies and keeping only stations that satisfy that condition
-      MinNumDays = round(NumDays_season * MinDays_Perc)
-      NumDays_NotNaN = np.sum(~np.isnan(align_obs_season_new), axis=1)
-      ind_stns_MinNumDays = np.where(NumDays_NotNaN >= MinNumDays)[0]
-      align_obs_MinNumDays = align_obs_season_new[ind_stns_MinNumDays,:]
-      NumStns_MinNumDays = ind_stns_MinNumDays.shape[0]
-      print("     - " + str(NumStns_MinNumDays) + " over " + str(NumStns) + " stations satisfy the threshold of having observations for at least " + str(int(MinDays_Perc*100)) + "% of the days over the considered period. Saving the metadata only about the considered stations (stnids/lats/lons)")
-      np.save(DirOUT + "/" + "Stn_ids.npy", stnids_unique[ind_stns_MinNumDays])
-      np.save(DirOUT + "/" + "Stn_lats.npy", lats_unique[ind_stns_MinNumDays])
-      np.save(DirOUT + "/" + "Stn_lons.npy", lons_unique[ind_stns_MinNumDays])
-
-      # Computing and saving the percentiles for the year climatology
-      print("     - Computing and saving the climatologies...")
-      climate_season = np.transpose(np.round(np.float32(np.nanpercentile(align_obs_MinNumDays, Perc_season, axis=1, interpolation="linear").astype(float)), decimals=1))
-      np.save(DirOUT + "/Climate_MAM.npy", climate_season)
-
-      
-      ############################
-      # SEASONAL CLIMATOLOGY (JJA) #
-      ############################
-
-      print(" ")
-      print(" - Computing the seasonal (JJA) point observational climatologies...")
-      
-      # Selecting the days in the observational dataset that belong to the considered season
-      M1 = 6
-      M2 = 7
-      M3 = 8
-      ind_dates_season = []
-      for ind_dates in range(NumDays):
-            month = (datetime.strptime(dates[ind_dates], "%Y%m%d")).month
-            if (month == M1) or (month == M2) or (month == M3):
-                  ind_dates_season.append(ind_dates)
-      NumDays_season = len(ind_dates_season)
-      align_obs_season = align_obs[:,ind_dates_season]
-
-      # Removing those stations that do not contain any observations (i.e. all row contains only nan values)
-      align_obs_season = np.delete(align_obs_season, np.all(np.isnan(align_obs_season), axis=1), 0)
-
-      # Adjusting the dataset to not have the minimum and the maximum values assigned to the 0th and 100th percentile
-      print("     - Adjusting the dataset to not have the minimum and the maximum values in the observational dataset assigned to the 0th and 100th percentile...")
-      min_obs = np.nanmin(align_obs_season, axis=1)
-      max_obs = np.nanmax(align_obs_season, axis=1)
-      align_obs_season_new = np.column_stack((min_obs, align_obs_season, max_obs))
-      align_obs_season_new = align_obs_season
-
-      # Defining the minimum number of days accepted to compute the climatologies and keeping only stations that satisfy that condition
-      MinNumDays = round(NumDays_season * MinDays_Perc)
-      NumDays_NotNaN = np.sum(~np.isnan(align_obs_season_new), axis=1)
-      ind_stns_MinNumDays = np.where(NumDays_NotNaN >= MinNumDays)[0]
-      align_obs_MinNumDays = align_obs_season_new[ind_stns_MinNumDays,:]
-      NumStns_MinNumDays = ind_stns_MinNumDays.shape[0]
-      print("     - " + str(NumStns_MinNumDays) + " over " + str(NumStns) + " stations satisfy the threshold of having observations for at least " + str(int(MinDays_Perc*100)) + "% of the days over the considered period. Saving the metadata only about the considered stations (stnids/lats/lons)")
-      np.save(DirOUT + "/" + "Stn_ids.npy", stnids_unique[ind_stns_MinNumDays])
-      np.save(DirOUT + "/" + "Stn_lats.npy", lats_unique[ind_stns_MinNumDays])
-      np.save(DirOUT + "/" + "Stn_lons.npy", lons_unique[ind_stns_MinNumDays])
-
-      # Computing and saving the percentiles for the year climatology
-      print("     - Computing and saving the climatologies...")
-      climate_season = np.transpose(np.round(np.float32(np.nanpercentile(align_obs_MinNumDays, Perc_season, axis=1, interpolation="linear").astype(float)), decimals=1))
-      np.save(DirOUT + "/Climate_JJA.npy", climate_season)
-
-
-      #############################
-      # SEASONAL CLIMATOLOGY (SON)  #
-      #############################
-
-      print(" ")
-      print(" - Computing the seasonal (SON) point observational climatologies...")
-      
-      # Selecting the days in the observational dataset that belong to the considered season
-      M1 = 9
-      M2 = 10
-      M3 = 11
-      ind_dates_season = []
-      for ind_dates in range(NumDays):
-            month = (datetime.strptime(dates[ind_dates], "%Y%m%d")).month
-            if (month == M1) or (month == M2) or (month == M3):
-                  ind_dates_season.append(ind_dates)
-      NumDays_season = len(ind_dates_season)
-      align_obs_season = align_obs[:,ind_dates_season]
-
-      # Removing those stations that do not contain any observations (i.e. all row contains only nan values)
-      align_obs_season = np.delete(align_obs_season, np.all(np.isnan(align_obs_season), axis=1), 0)
-
-      # Adjusting the dataset to not have the minimum and the maximum values assigned to the 0th and 100th percentile
-      print("     - Adjusting the dataset to not have the minimum and the maximum values in the observational dataset assigned to the 0th and 100th percentile...")
-      min_obs = np.nanmin(align_obs_season, axis=1)
-      max_obs = np.nanmax(align_obs_season, axis=1)
-      align_obs_season_new = np.column_stack((min_obs, align_obs_season, max_obs))
-      align_obs_season_new = align_obs_season
-      
-      # Defining the minimum number of days accepted to compute the climatologies and keeping only stations that satisfy that condition
-      MinNumDays = round(NumDays_season * MinDays_Perc)
-      NumDays_NotNaN = np.sum(~np.isnan(align_obs_season_new), axis=1)
-      ind_stns_MinNumDays = np.where(NumDays_NotNaN >= MinNumDays)[0]
-      align_obs_MinNumDays = align_obs_season_new[ind_stns_MinNumDays,:]
-      NumStns_MinNumDays = ind_stns_MinNumDays.shape[0]
-      print("     - " + str(NumStns_MinNumDays) + " over " + str(NumStns) + " stations satisfy the threshold of having observations for at least " + str(int(MinDays_Perc*100)) + "% of the days over the considered period. Saving the metadata only about the considered stations (stnids/lats/lons)")
-      np.save(DirOUT + "/" + "Stn_ids.npy", stnids_unique[ind_stns_MinNumDays])
-      np.save(DirOUT + "/" + "Stn_lats.npy", lats_unique[ind_stns_MinNumDays])
-      np.save(DirOUT + "/" + "Stn_lons.npy", lons_unique[ind_stns_MinNumDays])
-
-      # Computing and saving the percentiles for the year climatology
-      print("     - Computing and saving the climatologies...")
-      climate_season = np.transpose(np.round(np.float32(np.nanpercentile(align_obs_MinNumDays, Perc_season, axis=1, interpolation="linear").astype(float)), decimals=1))
-      np.save(DirOUT + "/Climate_SON.npy", climate_season)
-
+            # Computing and saving the climatologies and their metadata
+            print("     - Computing and saving the climatologies and their metadata")
+            climate = np.transpose(np.round(np.float32(np.nanpercentile(obs_temp_MinNumDays_new, percs, axis=1, interpolation="linear").astype(float)), decimals=1))
+            np.save(DirOUT + "/" + NamePercs + ".npy", percs)
+            np.save(DirOUT + "/Climate_" + ClimateType + ".npy", climate)
+            np.save(DirOUT + "/" + "Stn_ids.npy", stnids_MinNumDays)
+            np.save(DirOUT + "/" + "Stn_lats.npy", lats_MinNumDays)
+            np.save(DirOUT + "/" + "Stn_lons.npy", lons_MinNumDays)
 ###############################################################################################################
 
 # Computing the observational climatologies

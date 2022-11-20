@@ -41,13 +41,25 @@ ClimateType_list = ["Year", "DJF", "MAM", "JJA", "SON"]
 Git_repo = "/ec/vol/ecpoint/mofp/PhD/Papers2Write/PointRain_Climate"
 DirIN = "Data/Processed"
 DirOUT = "Data/Figures/MaxRainOBS"
+
+# RunType = "Static"
+# NameOBS_list = ["06_AlignedOBS_rawSTVL", "07_AlignedOBS_gridCPC", "08_AlignedOBS_cleanSTVL"]
+# Coeff_Grid2Point_list = [2,5,10,20,50,100]
+# MinDays_Perc_list = [0.5,0.75]
+# ClimateType_list = ["Year", "DJF", "MAM", "JJA", "SON"]
+
+# RunType = "Interactive"
+# NameOBS_list = ["08_AlignedOBS_cleanSTVL"]
+# Coeff_Grid2Point_list = [20]
+# MinDays_Perc_list = [0.5]
+# ClimateType_list = ["SON"]
 ############################################################################################################################################################
 
 # Costum functions
 
 def plot_MaxRainOBS(obs, lats, lons, dates, ClimateType, MinDays_Perc, Title_text_line_1, Title_text_line_2, DirOUT):
 
-      # Select the year or the seasonal subset with the observational dataset
+      # Selecting the year or the seasonal subset with the observational dataset
       if ClimateType == "Year":
             obs_temp = obs
       else:
@@ -66,7 +78,7 @@ def plot_MaxRainOBS(obs, lats, lons, dates, ClimateType, MinDays_Perc, Title_tex
                         ind_dates_season.append(ind_dates)
             obs_temp = obs[:,ind_dates_season]
 
-      # Select the stations with the considered minimum number of days with valid observations
+      # Selecting the stations with the considered minimum number of days with valid observations
       MinNumDays = round(obs_temp.shape[1] * MinDays_Perc)
       NumDays_NotNaN = np.sum(~np.isnan(obs_temp), axis=1)
       ind_stns_MinNumDays = np.where(NumDays_NotNaN >= MinNumDays)[0]
@@ -74,7 +86,7 @@ def plot_MaxRainOBS(obs, lats, lons, dates, ClimateType, MinDays_Perc, Title_tex
       lats_MinNumDays = lats[ind_stns_MinNumDays]
       lons_MinNumDays = lons[ind_stns_MinNumDays]
       
-      # Select the maximum rainfall values observed at each station
+      # Selecting the maximum rainfall values observed at each station
       max_obs = np.nanmax(obs_temp_MinNumDays, axis=1)
       
       # Converting the maximum rainfall values to geopoint
