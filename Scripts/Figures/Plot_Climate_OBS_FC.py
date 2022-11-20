@@ -18,7 +18,7 @@ import metview as mv
 # DatasetType_OBS_FC (string): defines the type of dataset to plot. Valid values are:
 #                                                         - "OBS": for observational climatologies
 #                                                         - "FC": for modelled climatologies
-# SystemFC (string): forecasting systems to plot. Considered only when DatasetType_OBS_FC="FC"
+# SystemFC_list (list of string): list of forecasting systems to consider. This parameter is used only when DatasetType_OBS_FC="FC"
 # MinDays_Perc_list (list of number, from 0 to 1): list of percentages for the minimum number of days over the considered period with valid observations to compute the climatologies.
 # NameOBS_list (list of strings): list of the names of the observations to quality check
 # Coeff_Grid2Point_list (list of integer number): list of coefficients used to make CPC's gridded rainfall values comparable with  STVL's point rainfall observations. Used only when running the quality check on the clean STVL observations.
@@ -38,15 +38,15 @@ YearS = 2000
 YearF = 2019
 Acc = 24
 RunType = "Static"
-DatasetType_OBS_FC = "OBS"
-SystemFC = "ERA5_ecPoint/Pt_BC_PERC"
+DatasetType_OBS_FC = "FC"
+SystemFC_list = ["HRES_46r1", "Reforecasts_46r1", "ERA5_ShortRange", "ERA5_EDA_ShortRange", "ERA5_LongRange", "ERA5_EDA_LongRange", "ERA5_ecPoint/Grid_BC_VALS", "ERA5_ecPoint/Pt_BC_PERC"]
 MinDays_Perc_list = [0.5,0.75]
 NameOBS_list = ["06_AlignedOBS_rawSTVL", "07_AlignedOBS_gridCPC", "08_AlignedOBS_cleanSTVL"]
 Coeff_Grid2Point_list = [2,5,10,20,50,100]
-ClimateType_list = ["Year"]
-Perc_list = [90, 95, 98, 99, 99.5, 99.8, 99.9, 99.95]
-#ClimateType_list = ["DJF", "MAM", "JJA", "SON"]
+#ClimateType_list = ["Year", "DJF", "MAM", "JJA", "SON"]
 #Perc_list = [90, 95, 98, 99, 99.5, 99.8]
+ClimateType_list = ["Year"]
+Perc_list = [99.9, 99.95]
 Git_repo = "/ec/vol/ecpoint/mofp/PhD/Papers2Write/PointRain_Climate"
 DirIN = "Data/Processed"
 DirOUT= "Data/Figures"
@@ -125,54 +125,28 @@ def plot_climate(RunType, ClimateType, Perc, Title_text_line_1, Title_text_line_
 #######################################################################################################################
 
 
-# Setting generic parameters depending on whether observational or modelled climatologies are plotted
 if DatasetType_OBS_FC == "OBS":
+
+    # Setting generic parameters depending on whether observational or modelled climatologies are plotted
     Dataset_title = "observational"
     DirIN = DirIN + "/09_Climate_OBS"
     DirOUT = DirOUT + "/Climate_OBS"
-elif DatasetType_OBS_FC == "FC":
-    Dataset_title = "modelled (" + SystemFC + ")"
-    DirIN = DirIN + "/11_Climate_FC/" + SystemFC
-    DirOUT = DirOUT + "/Climate_FC/" + SystemFC
 
+    # Plotting observational rainfall climatologies at points
+    for MinDays_Perc in MinDays_Perc_list:
 
-# Plotting (observational or modelled) rainfall climatologies at points
-for MinDays_Perc in MinDays_Perc_list:
+        for NameOBS in NameOBS_list:
 
-    for NameOBS in NameOBS_list:
+            if (NameOBS == "06_AlignedOBS_rawSTVL") or (NameOBS == "07_AlignedOBS_gridCPC"):
 
-        if (NameOBS == "06_AlignedOBS_rawSTVL") or (NameOBS == "07_AlignedOBS_gridCPC"):
-
-            print(" ")
-            print("Plotting the " + Dataset_title + " climatology for "+ NameOBS + " with a minimum of " + str(int(MinDays_Perc*100)) + "% of days over the considered period with valid observations to compute the climatologies")
-            Dataset_temp = NameOBS.split("_")[-1]     
-            Title_text_line_2 = Dataset_temp + " - Minum of " + str(int(MinDays_Perc*100)) + "% of days with valid observations" 
-            
-            # Setting main input/output directories
-            MainDirIN = Git_repo + "/" + DirIN + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF)
-            MainDirOUT = Git_repo + "/" + DirOUT + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF) 
-            if not exists(MainDirOUT):
-                os.makedirs(MainDirOUT)
-
-            # Plotting climatologies
-            for ClimateType in ClimateType_list:               
-                for Perc in Perc_list:
-                    print(" - " + ClimateType + ", " + str(Perc) + "th percentile")
-                    Title_text_line_1 = str(Acc) + "-hourly " + Dataset_title + " rainfall climatology between " + str(YearS) + " and " + str(YearF) + " - " + ClimateType + " - " + str(Perc) + "th percentile"
-                    plot_climate(RunType, ClimateType, Perc, Title_text_line_1, Title_text_line_2, MainDirIN, MainDirOUT)
-
-        elif NameOBS == "08_AlignedOBS_cleanSTVL":
-
-            for Coeff_Grid2Point in Coeff_Grid2Point_list:
-                        
                 print(" ")
-                print("Plotting the " + Dataset_title + " climatology for "+ NameOBS + " (Coeff_Grid2Point=" + str(Coeff_Grid2Point) + ") with a minimum of " + str(int(MinDays_Perc*100)) + "% of days over the considered period with valid observations to compute the climatologies")
-                Dataset_temp = NameOBS.split("_")[-1] + " (Coeff_Grid2Point=" + str(Coeff_Grid2Point) + ")"
+                print("Plotting the " + Dataset_title + " climatology for "+ NameOBS + " with a minimum of " + str(int(MinDays_Perc*100)) + "% of days over the considered period with valid observations to compute the climatologies")
+                Dataset_temp = NameOBS.split("_")[-1]     
                 Title_text_line_2 = Dataset_temp + " - Minum of " + str(int(MinDays_Perc*100)) + "% of days with valid observations" 
-
+                
                 # Setting main input/output directories
-                MainDirIN = Git_repo + "/" + DirIN + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF) + "/Coeff_Grid2Point_" + str(Coeff_Grid2Point)
-                MainDirOUT = Git_repo + "/" + DirOUT + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF) + "/Coeff_Grid2Point_" + str(Coeff_Grid2Point)
+                MainDirIN = Git_repo + "/" + DirIN + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF)
+                MainDirOUT = Git_repo + "/" + DirOUT + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF) 
                 if not exists(MainDirOUT):
                     os.makedirs(MainDirOUT)
 
@@ -182,3 +156,81 @@ for MinDays_Perc in MinDays_Perc_list:
                         print(" - " + ClimateType + ", " + str(Perc) + "th percentile")
                         Title_text_line_1 = str(Acc) + "-hourly " + Dataset_title + " rainfall climatology between " + str(YearS) + " and " + str(YearF) + " - " + ClimateType + " - " + str(Perc) + "th percentile"
                         plot_climate(RunType, ClimateType, Perc, Title_text_line_1, Title_text_line_2, MainDirIN, MainDirOUT)
+
+            elif NameOBS == "08_AlignedOBS_cleanSTVL":
+
+                for Coeff_Grid2Point in Coeff_Grid2Point_list:
+                            
+                    print(" ")
+                    print("Plotting the " + Dataset_title + " climatology for "+ NameOBS + " (Coeff_Grid2Point=" + str(Coeff_Grid2Point) + ") with a minimum of " + str(int(MinDays_Perc*100)) + "% of days over the considered period with valid observations to compute the climatologies")
+                    Dataset_temp = NameOBS.split("_")[-1] + " (Coeff_Grid2Point=" + str(Coeff_Grid2Point) + ")"
+                    Title_text_line_2 = Dataset_temp + " - Minum of " + str(int(MinDays_Perc*100)) + "% of days with valid observations" 
+
+                    # Setting main input/output directories
+                    MainDirIN = Git_repo + "/" + DirIN + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF) + "/Coeff_Grid2Point_" + str(Coeff_Grid2Point)
+                    MainDirOUT = Git_repo + "/" + DirOUT + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF) + "/Coeff_Grid2Point_" + str(Coeff_Grid2Point)
+                    if not exists(MainDirOUT):
+                        os.makedirs(MainDirOUT)
+
+                    # Plotting climatologies
+                    for ClimateType in ClimateType_list:               
+                        for Perc in Perc_list:
+                            print(" - " + ClimateType + ", " + str(Perc) + "th percentile")
+                            Title_text_line_1 = str(Acc) + "-hourly " + Dataset_title + " rainfall climatology between " + str(YearS) + " and " + str(YearF) + " - " + ClimateType + " - " + str(Perc) + "th percentile"
+                            plot_climate(RunType, ClimateType, Perc, Title_text_line_1, Title_text_line_2, MainDirIN, MainDirOUT)
+
+elif DatasetType_OBS_FC == "FC":
+
+    for SystemFC in SystemFC_list:
+
+        # Setting generic parameters depending on whether observational or modelled climatologies are plotted
+        Dataset_title = "modelled (" + SystemFC + ")"
+        DirIN_temp = DirIN + "/11_Climate_FC/" + SystemFC
+        DirOUT_temp = DirOUT + "/Climate_FC/" + SystemFC
+
+        # Plotting modelled rainfall climatologies at points
+        for MinDays_Perc in MinDays_Perc_list:
+
+            for NameOBS in NameOBS_list:
+
+                if (NameOBS == "06_AlignedOBS_rawSTVL") or (NameOBS == "07_AlignedOBS_gridCPC"):
+
+                    print(" ")
+                    print("Plotting the " + Dataset_title + " climatology for "+ NameOBS + " with a minimum of " + str(int(MinDays_Perc*100)) + "% of days over the considered period with valid observations to compute the climatologies")
+                    Dataset_temp = NameOBS.split("_")[-1]     
+                    Title_text_line_2 = Dataset_temp + " - Minum of " + str(int(MinDays_Perc*100)) + "% of days with valid observations" 
+                    
+                    # Setting main input/output directories
+                    MainDirIN = Git_repo + "/" + DirIN_temp + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF)
+                    MainDirOUT = Git_repo + "/" + DirOUT_temp + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF) 
+                    if not exists(MainDirOUT):
+                        os.makedirs(MainDirOUT)
+
+                    # Plotting climatologies
+                    for ClimateType in ClimateType_list:               
+                        for Perc in Perc_list:
+                            print(" - " + ClimateType + ", " + str(Perc) + "th percentile")
+                            Title_text_line_1 = str(Acc) + "-hourly " + Dataset_title + " rainfall climatology between " + str(YearS) + " and " + str(YearF) + " - " + ClimateType + " - " + str(Perc) + "th percentile"
+                            plot_climate(RunType, ClimateType, Perc, Title_text_line_1, Title_text_line_2, MainDirIN, MainDirOUT)
+
+                elif NameOBS == "08_AlignedOBS_cleanSTVL":
+
+                    for Coeff_Grid2Point in Coeff_Grid2Point_list:
+                                
+                        print(" ")
+                        print("Plotting the " + Dataset_title + " climatology for "+ NameOBS + " (Coeff_Grid2Point=" + str(Coeff_Grid2Point) + ") with a minimum of " + str(int(MinDays_Perc*100)) + "% of days over the considered period with valid observations to compute the climatologies")
+                        Dataset_temp = NameOBS.split("_")[-1] + " (Coeff_Grid2Point=" + str(Coeff_Grid2Point) + ")"
+                        Title_text_line_2 = Dataset_temp + " - Minum of " + str(int(MinDays_Perc*100)) + "% of days with valid observations" 
+
+                        # Setting main input/output directories
+                        MainDirIN = Git_repo + "/" + DirIN_temp + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF) + "/Coeff_Grid2Point_" + str(Coeff_Grid2Point)
+                        MainDirOUT = Git_repo + "/" + DirOUT_temp + "/MinDays_Perc" + str(int(MinDays_Perc*100)) + "/" + NameOBS + "_" + str(Acc) + "h_" + str(YearS) + "_" + str(YearF) + "/Coeff_Grid2Point_" + str(Coeff_Grid2Point)
+                        if not exists(MainDirOUT):
+                            os.makedirs(MainDirOUT)
+
+                        # Plotting climatologies
+                        for ClimateType in ClimateType_list:               
+                            for Perc in Perc_list:
+                                print(" - " + ClimateType + ", " + str(Perc) + "th percentile")
+                                Title_text_line_1 = str(Acc) + "-hourly " + Dataset_title + " rainfall climatology between " + str(YearS) + " and " + str(YearF) + " - " + ClimateType + " - " + str(Perc) + "th percentile"
+                                plot_climate(RunType, ClimateType, Perc, Title_text_line_1, Title_text_line_2, MainDirIN, MainDirOUT)

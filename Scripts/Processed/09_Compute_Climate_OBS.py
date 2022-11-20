@@ -60,8 +60,7 @@ def compute_climate_obs(MinDays_Perc, Perc_year, Perc_season, DirIN, DirOUT):
 
       # Adjusting the dataset to not have the minimum and the maximum values in "align_obs" assigned to the 0th and 100th percentile
       # Note: If the whole dataset for a station contains only nan, a warning message will appear on the screen, and the minimum or maximum
-      # value that will be associated to that station will be a nan. This issue does not stop the computations or compromise the results. This 
-      # happens mainly for the CPC dataset where a point station on the coast my be seen by CPC in the sea where there is no data available.
+      # value that will be associated to that station will be a nan. This issue does not stop the computations or compromise the results.
       print("     - Adjusting the dataset to not have the minimum and the maximum values in the observational dataset assigned to the 0th and 100th percentile...")
       min_obs = np.nanmin(align_obs, axis=1)
       max_obs = np.nanmax(align_obs, axis=1)
@@ -130,7 +129,6 @@ def compute_climate_obs(MinDays_Perc, Perc_year, Perc_season, DirIN, DirOUT):
       np.save(DirOUT + "/Percentiles_Season.npy", Perc_season)
       np.save(DirOUT + "/Climate_DJF.npy", climate_season)
 
-
       ##############################
       # SEASONAL CLIMATOLOGY (MAM) #
       ##############################
@@ -175,7 +173,7 @@ def compute_climate_obs(MinDays_Perc, Perc_year, Perc_season, DirIN, DirOUT):
       climate_season = np.transpose(np.round(np.float32(np.nanpercentile(align_obs_MinNumDays, Perc_season, axis=1, interpolation="linear").astype(float)), decimals=1))
       np.save(DirOUT + "/Climate_MAM.npy", climate_season)
 
-
+      
       ############################
       # SEASONAL CLIMATOLOGY (JJA) #
       ############################
@@ -264,6 +262,7 @@ def compute_climate_obs(MinDays_Perc, Perc_year, Perc_season, DirIN, DirOUT):
       print("     - Computing and saving the climatologies...")
       climate_season = np.transpose(np.round(np.float32(np.nanpercentile(align_obs_MinNumDays, Perc_season, axis=1, interpolation="linear").astype(float)), decimals=1))
       np.save(DirOUT + "/Climate_SON.npy", climate_season)
+
 ###############################################################################################################
 
 # Computing the observational climatologies

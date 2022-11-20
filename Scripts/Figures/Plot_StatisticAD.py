@@ -54,6 +54,7 @@ DirOUT= "Data/Figures/StatisticAD"
 ############################################################################################################################################################
 
 # Costum functions
+
 def plot_statisticAD(RunType, ClimateType, Title_text_line_1, Title_text_line_2, DirIN, DirOUT):
 
       # Reading the considered climatology and the correspondent percentiles, and the rainfall stations coordinates

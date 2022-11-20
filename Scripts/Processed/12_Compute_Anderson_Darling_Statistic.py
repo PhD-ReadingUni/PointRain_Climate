@@ -23,7 +23,7 @@ from scipy.stats import anderson_ksamp
 # INPUT PARAMETERS
 Acc = 24
 Climate_OBS_Period = "2000_2019"
-SystemFC_list = ["HRES_46r1", "Reforecasts_46r1", "ERA5_ShortRange", "ERA5_EDA_ShortRange", "ERA5_LongRange", "ERA5_EDA_LongRange", "ERA5_ecPoint/Grid_BC_VALS", "ERA5_ecPoint/Pt_BC_PERC"]
+SystemFC_list = ["Reforecasts_46r1", "ERA5_ShortRange", "ERA5_EDA_ShortRange", "ERA5_LongRange", "ERA5_EDA_LongRange", "ERA5_ecPoint/Grid_BC_VALS", "ERA5_ecPoint/Pt_BC_PERC"]
 Climate_OBS_Period = "2000_2019"
 MinDays_Perc_list = [0.5,0.75]
 NameOBS_list = ["06_AlignedOBS_rawSTVL", "07_AlignedOBS_gridCPC", "08_AlignedOBS_cleanSTVL"]
@@ -50,7 +50,7 @@ def statisticAD(DirIN_OBS, DirIN_FC, DirOUT):
       #         Therefore, we would not reject the null hypothesis of the test.
       #         Thus, we don’t have sufficient evidence to say that the samples are not drawn from the same population.
 
-      Dataset_list = ["Year", "DJF", "MAM", "JJA", "SON"]
+      Dataset_list = ["DJF", "MAM", "JJA", "SON"]
       for Dataset in Dataset_list:
             
             print(" - Computing the Anderson-Darling statistic for k-samples for the " + Dataset + " climatology")
@@ -58,6 +58,10 @@ def statisticAD(DirIN_OBS, DirIN_FC, DirOUT):
             # Reading the climatologies and their locations
             climate_obs = np.load(DirIN_OBS + "/Climate_" + Dataset + ".npy")
             climate_fc = np.load(DirIN_FC + "/Climate_" + Dataset + ".npy")
+            print(climate_obs.shape)
+            print(climate_fc.shape)
+            gfhfhfgh
+
             lats = np.load(DirIN_OBS + "/Stn_lats.npy")
             lons = np.load(DirIN_OBS + "/Stn_lons.npy")
             num_stn = climate_obs.shape[0]
